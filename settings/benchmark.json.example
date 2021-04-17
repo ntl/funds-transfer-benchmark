@@ -1,0 +1,9 @@
+{
+  "operations": 1000,
+  "entities": 1000,
+  "throughputLimit": 1000000,
+  "force": false,
+  "writePartitions": 1,
+  "readPartitions": 1,
+  "recreateMessageDB": true
+}
