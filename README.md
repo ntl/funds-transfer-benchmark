@@ -20,7 +20,7 @@ Most of the scripts in this project can be controlled with a settings file, `set
 
 ## Setup Procedure
 
-###### Account & Funds Transfer Components
+##### Account & Funds Transfer Components
 
 Ensure `./get-projects.sh` from the [Eventide Contributor Assets project](https://github.com/eventide-project/contributor-assets) has run successfully. Then clone [Account Component](https://github.com/eventide-examples/account-component) and [Funds Transfer Component](https://github.com/eventide-examples/account-component) in `PROJECTS_HOME`:
 
@@ -37,7 +37,7 @@ Return to this project directory afterwards:
 popd
 ```
 
-###### Gem Installation
+##### Gem Installation
 
 Install the necessary Ruby gems locally:
 
@@ -47,7 +47,7 @@ Install the necessary Ruby gems locally:
 
 ## Benchmark Procedure
 
-###### Prepare Benchmark
+##### Prepare Benchmark
 
 Enqueue a batch of funds transfers that will be performed during the benchmark:
 
@@ -55,7 +55,7 @@ Enqueue a batch of funds transfers that will be performed during the benchmark:
 ./prepare.sh
 ```
 
-###### Start Components
+##### Start Components
 
 In separate terminals, start an instance of the AccountComponent for every consumer group member. Consumer group size is controlled via the `readPartitions` setting in `settings/benchmark.json`, and the default is 1. The consumer group member is set via the `CONSUMER_GROUP_MEMBER` environment variable, and is a number between one and the consumer group size.
 
@@ -69,18 +69,18 @@ Also start FundsTransferComponent:
 CONSUMER_GROUP_MEMBER=1 ./start-funds-transfer-component.sh
 ```
 
-###### Wait For Initial Deposits To Be Processed
+##### Wait For Initial Deposits To Be Processed
 
 The `./prepare.sh` script added funds into every account with a Deposit command message. Wait for a Deposited event to be recorded for each deposit by visually inspecting the terminals running AccountComponent.
 
-###### Initiate Benchmark Run
+##### Initiate Benchmark Run
 
 Issue the transfers that will be measured by the benchmark:
 
 ``` sh
 ./initiate.sh
 ```
-###### Inspect Results
+##### Inspect Results
 
 The results are calculated from the messages written to MessageDB. To print them:
 
