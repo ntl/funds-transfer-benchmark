@@ -1,4 +1,4 @@
-# Eventide Benchmarking
+# Eventide Funds Transfer Benchmark Utility
 
 ## Summary
 
