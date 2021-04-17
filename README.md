@@ -18,7 +18,7 @@ Most of the scripts in this project can be controlled with a settings file, `set
 | `readPartitions`    | Size of consumer groups                                                | `1`                  |
 | `recreateMessageDB` | Whether to fully recreate message-db when preparing the benchmark      | `true`               |
 
-## Procedure
+## Setup Procedure
 
 ###### Account & Funds Transfer Components
 
@@ -44,6 +44,8 @@ Install the necessary Ruby gems locally:
 ``` sh
 ./install-gems.sh
 ```
+
+## Benchmark Procedure
 
 ###### Prepare Benchmark
 
