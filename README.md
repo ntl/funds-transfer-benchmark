@@ -20,6 +20,23 @@ Most of the scripts in this project can be controlled with a settings file, `set
 
 ## Procedure
 
+###### Account & Funds Transfer Components
+
+Ensure `./get-projects.sh` from the [Eventide Contributor Assets project](https://github.com/eventide-project/contributor-assets) has run successfully. Then clone [Account Component](https://github.com/eventide-examples/account-component) and [Funds Transfer Component](https://github.com/eventide-examples/account-component) in `PROJECTS_HOME`:
+
+``` sh
+pushd $PROJECTS_HOME
+
+git clone git@github.com:eventide-examples/account-component.git
+git clone git@github.com:eventide-examples/funds-transfer-component.git
+```
+
+Return to this project directory afterwards:
+
+``` sh
+popd
+```
+
 ###### Gem Installation
 
 Install the necessary Ruby gems locally:
