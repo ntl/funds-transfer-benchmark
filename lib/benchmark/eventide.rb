@@ -14,6 +14,7 @@ require 'benchmark/eventide/consumer_group'
 require 'benchmark/eventide/prepare'
 require 'benchmark/eventide/initiate'
 
-require 'benchmark/eventide/print_results'
+require 'benchmark/eventide/measurements/transfers'
+require 'benchmark/eventide/measurements/write_throughput'
 
 require 'benchmark/eventide/controls'
