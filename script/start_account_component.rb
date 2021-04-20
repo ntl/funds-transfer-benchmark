@@ -9,7 +9,7 @@ require 'component_host'
 module AccountComponent
   module StartConsumerGroup
     def self.call
-      consumer_start_attrs = Benchmark::Eventide::ConsumerGroup.start_attrs
+      consumer_start_attrs = FundsTransferBenchmark::ConsumerGroup.start_attrs
 
       Consumers::Commands.start('account:command', **consumer_start_attrs)
       Consumers::Commands::Transactions.start('accountTransaction', **consumer_start_attrs)

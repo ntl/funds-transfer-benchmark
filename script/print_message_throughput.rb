@@ -2,4 +2,4 @@
 
 require_relative '../init'
 
-Benchmark::Eventide::Measurements::WriteThroughput.()
+FundsTransferBenchmark::Measurements::WriteThroughput.()

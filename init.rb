@@ -1,3 +1,3 @@
 require_relative 'load_path'
 
-require 'benchmark/eventide'
+require 'funds_transfer_benchmark'

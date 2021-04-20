@@ -4,4 +4,4 @@ ENV['LOG_LEVEL'] ||= 'debug'
 
 require_relative '../init'
 
-Benchmark::Eventide::Initiate.()
+FundsTransferBenchmark::Initiate.()
