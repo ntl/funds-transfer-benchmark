@@ -1,10 +1,29 @@
 module FundsTransferBenchmark
   module Controls
     module ID
-      def self.example(increment=nil, prefix: nil, seed: nil)
+      def self.example(increment=nil, partition_count=nil, prefix: nil, seed: nil)
         increment ||= 0
         prefix ||= 0
-        seed ||= 0
+
+        if seed.nil?
+          seed = 0
+
+          if not partition_count.nil?
+            target_advisory_lock_partition = increment % partition_count
+
+            loop do
+              id = self.example(increment, prefix: prefix, seed: seed)
+
+              advisory_lock_partition = Hash64.get_unsigned(id) % partition_count
+
+              if advisory_lock_partition == target_advisory_lock_partition
+                return id
+              end
+
+              seed += 1
+            end
+          end
+        end
 
         [
           prefix.to_s(16).ljust(8, '0'),
@@ -24,9 +43,8 @@ module FundsTransferBenchmark
       module Sequence
         def self.example(count=nil, prefix: nil, seed: nil, partitions: nil)
           count ||= 2
-          seed_override = seed
 
-          multiple_partitions = !partitions.nil?
+          return_single_partition = partitions.nil?
           partitions ||= 1
 
           partition_count = partitions
@@ -40,27 +58,15 @@ module FundsTransferBenchmark
           count.times.map do |increment|
             partition = partition_cycle.next
 
-            seed = seed_override || 0
-
-            begin
-              id = ID.example(increment, prefix: prefix, seed: seed)
-
-              break if not seed_override.nil?
-
-              hash64 = Hash64.get(id)
-              hash64_unsigned = [hash64].pack('q').unpack('Q').first
-              advisory_lock_partition = hash64_unsigned % partition_count
-
-              seed += 1
-            end until advisory_lock_partition == partition
+            id = ID.example(increment, partition_count, seed: seed, prefix: prefix)
 
             partitions[partition] << id
           end
 
-          if multiple_partitions
-            return partitions
-          else
+          if return_single_partition
             return partitions.first
+          else
+            return partitions
           end
         end
       end
