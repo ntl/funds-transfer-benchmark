@@ -2,8 +2,8 @@ module FundsTransferBenchmark
   module Controls
     module FundsTransfer
       module ID
-        def self.example(increment=nil, seed: nil)
-          Controls::ID.example(increment, prefix: prefix, seed: seed)
+        def self.example(increment=nil, partition_count=nil, seed: nil)
+          Controls::ID.example(increment, partition_count, prefix: prefix, seed: seed)
         end
 
         def self.prefix
