@@ -7,7 +7,7 @@ context "Controls" do
         increment = 0x11
         id = Controls::ID.example(increment)
 
-        correct_id = "00000000-0000-4000-8000-000000000011"
+        correct_id = '00000000-0000-4000-8000-000000000011'
 
         comment id.inspect
         detail "Correct ID: #{correct_id.inspect}"
@@ -20,7 +20,7 @@ context "Controls" do
       context "Not Given" do
         id = Controls::ID.example
 
-        correct_id = "00000000-0000-4000-8000-000000000000"
+        correct_id = '00000000-0000-4000-8000-000000000000'
 
         comment id.inspect
         detail "Correct ID: #{correct_id.inspect}"

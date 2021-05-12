@@ -7,7 +7,7 @@ context "Controls" do
         seed = 0x1111
         id = Controls::ID.example(seed: seed)
 
-        correct_id = "00000000-1111-4000-8000-000000000000"
+        correct_id = '00000000-1111-4000-8000-000000000000'
 
         comment id.inspect
         detail "Correct ID: #{correct_id.inspect}"
@@ -20,7 +20,7 @@ context "Controls" do
       context "Not Given" do
         id = Controls::ID.example
 
-        correct_id = "00000000-0000-4000-8000-000000000000"
+        correct_id = '00000000-0000-4000-8000-000000000000'
 
         comment id.inspect
         detail "Correct ID: #{correct_id.inspect}"

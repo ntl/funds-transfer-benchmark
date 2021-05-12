@@ -7,7 +7,7 @@ context "Controls" do
         prefix = 0xAABB
         id = Controls::ID.example(prefix: prefix)
 
-        control_id = "aabb0000-0000-4000-8000-000000000000"
+        control_id = 'aabb0000-0000-4000-8000-000000000000'
 
         comment id.inspect
         detail "Control ID: #{control_id.inspect}"
@@ -20,7 +20,7 @@ context "Controls" do
       context "Not Given" do
         id = Controls::ID.example
 
-        control_id = "00000000-0000-4000-8000-000000000000"
+        control_id = '00000000-0000-4000-8000-000000000000'
 
         comment id.inspect
         detail "Control ID: #{control_id.inspect}"
