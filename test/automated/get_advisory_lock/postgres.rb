@@ -15,7 +15,7 @@ context "Get Advisory Lock" do
   SQL
 
   advisory_lock = [advisory_lock_text.to_i].pack('q').unpack('Q').first
-  comment "        Advisory Lock: 0x#{advisory_lock.to_s(16)}"
+  comment "Advisory Lock: 0x#{advisory_lock.to_s(16)}"
 
   control_advisory_lock = get_advisory_lock.(stream_name)
   detail "Control Advisory Lock: 0x#{control_advisory_lock.to_s(16)}"
