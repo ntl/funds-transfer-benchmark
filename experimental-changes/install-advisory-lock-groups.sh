@@ -41,6 +41,15 @@ w
 %p
 ED
 
+echo
+echo "Reinstalling MessageDB functions"
+echo "- - -"
+echo
+
+source ./set-pg-env.sh
+
+./gems/bin/mdb-install-functions
+
 echo "- - -"
 echo "(done)"
 echo
