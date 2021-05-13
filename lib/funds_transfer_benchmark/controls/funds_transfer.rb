@@ -1,9 +1,13 @@
 module FundsTransferBenchmark
   module Controls
     module FundsTransfer
+      def self.id
+        ID.example
+      end
+
       module ID
-        def self.example(increment=nil, partition_count=nil, seed: nil)
-          Controls::ID.example(increment, partition_count, prefix: prefix, seed: seed)
+        def self.example(increment=nil, group_size: nil)
+          Controls::ID::GroupMember.example(increment, prefix: prefix, group_size: group_size)
         end
 
         def self.prefix
@@ -11,12 +15,14 @@ module FundsTransferBenchmark
         end
 
         module Sequence
-          def self.example(count=nil, partitions: nil)
-            Controls::ID::Sequence.example(count, prefix: prefix, partitions: partitions)
-          end
+          module Group
+            def self.example(count: nil, size: nil)
+              Controls::ID::Sequence::Group.example(count: count, size: size, prefix: prefix)
+            end
 
-          def self.prefix
-            ID.prefix
+            def self.prefix
+              ID.prefix
+            end
           end
         end
       end

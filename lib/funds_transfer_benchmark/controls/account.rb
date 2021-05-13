@@ -26,22 +26,12 @@ module FundsTransferBenchmark
       end
 
       module ID
-        def self.example(increment=nil, partition_count=nil, seed: nil)
-          Controls::ID.example(increment, partition_count, prefix: prefix, seed: seed)
+        def self.example(increment=nil, group_size: nil)
+          Controls::ID::GroupMember.example(increment, prefix: prefix, group_size: group_size)
         end
 
         def self.prefix
           0x00000000
-        end
-
-        module Sequence
-          def self.example(count=nil, partitions: nil)
-            Controls::ID::Sequence.example(count, prefix: prefix, partitions: partitions)
-          end
-
-          def self.prefix
-            ID.prefix
-          end
         end
       end
     end

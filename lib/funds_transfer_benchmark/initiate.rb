@@ -8,7 +8,7 @@ module FundsTransferBenchmark
     setting :operations
     setting :entities
     setting :throughput_limit
-    setting :advisory_lock_pool_size
+    setting :advisory_lock_group_size
     setting :force
 
     dependency :clock, Clock::UTC
@@ -30,50 +30,44 @@ module FundsTransferBenchmark
 
       assure_not_initiated
 
-      transfer_id_partitions = Controls::FundsTransfer::ID::Sequence.example(operations, partitions: advisory_lock_pool_size)
+      transfer_ids_by_group_member = Controls::FundsTransfer::ID::Sequence::Group.example(count: operations, size: advisory_lock_group_size)
 
-      start_time = clock.now
-
-      partition_count = transfer_id_partitions.count
-
-      transfer_partitions = partition_count.times.map do |partition|
-        transfer_ids = transfer_id_partitions.fetch(partition)
-
+      transfers_by_group_member = transfer_ids_by_group_member.map.with_index do |transfer_ids, group_member|
         transfer_ids.map.with_index do |transfer_id, index|
-          iteration = (index * partition_count) + partition
+          iteration = (index * advisory_lock_group_size) + group_member
 
           withdrawal_id_increment = iteration
-          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, partition_count)
+          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, group_size: advisory_lock_group_size)
 
           deposit_id_increment = withdrawal_id_increment + 1
-          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, partition_count)
+          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, group_size: advisory_lock_group_size)
 
-          TransferData.new(transfer_id, withdrawal_account_id, deposit_account_id, iteration)
+          Transfer.new(transfer_id, withdrawal_account_id, deposit_account_id, iteration)
         end
       end
 
-      partition_count.times.map do |partition|
+      start_time = clock.now
+
+      transfers_by_group_member.map.with_index do |transfers, group_member|
         fork do
           session = build_session
-
-          transfers = transfer_partitions.fetch(partition)
 
           transfers.each.with_index do |transfer, index|
             cycle_start_time = clock.now
 
-            logger.trace { "Issuing funds transfer command (Partition: #{partition}, Transfer ID: #{transfer.funds_transfer_id}, Withdrawal Account: #{transfer.withdrawal_account_id}, Deposit Account: #{transfer.deposit_account_id}, Iteration: #{transfer.iteration + 1}/#{operations})" }
+            logger.trace { "Issuing funds transfer command (Group Member: #{group_member}, Transfer ID: #{transfer.funds_transfer_id}, Withdrawal Account: #{transfer.withdrawal_account_id}, Deposit Account: #{transfer.deposit_account_id}, Iteration: #{transfer.iteration + 1}/#{operations})" }
 
-            Controls::Write::Transfer.(id: transfer.funds_transfer_id, withdrawal_account_id: transfer.withdrawal_account_id, deposit_account_id: transfer.deposit_account_id, session: session)
+            transfer.(session)
 
             cycle_finish_time = clock.now
 
-            if not index.zero?
-              elapsed_time_seconds = cycle_finish_time - cycle_start_time
+            elapsed_time_seconds = cycle_finish_time - cycle_start_time
 
+            if not index.zero?
               wait_cycle(elapsed_time_seconds)
             end
 
-            logger.debug { "Funds transfer command issued (Partition: #{partition}, Transfer ID: #{transfer.funds_transfer_id}, Withdrawal Account: #{transfer.withdrawal_account_id}, Deposit Account: #{transfer.deposit_account_id}, Iteration: #{transfer.iteration + 1}/#{operations}, Elapsed Time: %0.3fms" % (elapsed_time_seconds.to_i * 1_000) }
+            logger.debug { "Funds transfer command issued (Group Member: #{group_member}, Transfer ID: #{transfer.funds_transfer_id}, Withdrawal Account: #{transfer.withdrawal_account_id}, Deposit Account: #{transfer.deposit_account_id}, Iteration: #{transfer.iteration + 1}/#{operations}, Elapsed Time: %0.3fms" % (elapsed_time_seconds * 1_000) }
           end
         end
       end
@@ -90,7 +84,10 @@ module FundsTransferBenchmark
     end
 
     def wait_cycle(elapsed_time_seconds)
-      wait_time_seconds = partition_cycle_time_seconds - elapsed_time_seconds
+      process_count = advisory_lock_group_size
+      per_process_cycle_time_seconds = cycle_time_seconds * process_count
+
+      wait_time_seconds = per_process_cycle_time_seconds - elapsed_time_seconds
 
       logger.trace { "Wait cycle starting (Cycle Time: %0.3fms, Elapsed Time: %0.3fms, Wait Time: %0.3fms)" % [cycle_time_seconds * 1000, elapsed_time_seconds * 1000, wait_time_seconds * 1000] }
 
@@ -123,10 +120,6 @@ module FundsTransferBenchmark
       end
     end
 
-    def partition_cycle_time_seconds
-      cycle_time_seconds * advisory_lock_pool_size
-    end
-
     def cycle_time_seconds
       @cycle_time ||= Rational(1, throughput_limit)
     end
@@ -135,6 +128,15 @@ module FundsTransferBenchmark
       MessageStore::Postgres::Session.build
     end
 
-    TransferData = Struct.new(:funds_transfer_id, :withdrawal_account_id, :deposit_account_id, :iteration)
+    Transfer = Struct.new(:funds_transfer_id, :withdrawal_account_id, :deposit_account_id, :iteration) do
+      def call(session)
+        Controls::Write::Transfer.(
+          id: funds_transfer_id,
+          withdrawal_account_id: withdrawal_account_id,
+          deposit_account_id: deposit_account_id,
+          session: session
+        )
+      end
+    end
   end
 end
