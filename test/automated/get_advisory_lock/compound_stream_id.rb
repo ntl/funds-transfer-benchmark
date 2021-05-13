@@ -7,8 +7,8 @@ context "Get Advisory Lock" do
 
     get_advisory_lock = AdvisoryLock::Get.new
 
-    advisory_lock_pool_size = 11
-    get_advisory_lock.advisory_lock_pool_size = advisory_lock_pool_size
+    advisory_lock_group_size = 11
+    get_advisory_lock.advisory_lock_group_size = advisory_lock_group_size
 
     category = Controls::StreamName::Category.random
 
@@ -19,9 +19,9 @@ context "Get Advisory Lock" do
     advisory_lock = get_advisory_lock.(stream_name)
 
     comment "Stream name: #{stream_name.inspect}"
-    comment advisory_lock.inspect
+    comment "Advisory Lock: 0x#{advisory_lock.to_s(16)}"
 
-    detail "Control Advisory Lock: #{control_advisory_lock.inspect}"
+    detail "Control Advisory Lock: 0x#{control_advisory_lock.to_s(16)}"
 
     test "IDs after the cardinal ID are ignored" do
       assert(advisory_lock == control_advisory_lock)
