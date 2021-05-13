@@ -6,6 +6,14 @@ module FundsTransferBenchmark
 
       setting :operations
 
+      def get_advisory_lock
+        @get_advisory_lock ||= AdvisoryLock::Get.build
+      end
+
+      def get_consumer_group_member
+        @get_consumer_group_member ||= ConsumerGroup::GetMember.build
+      end
+
       def session
         @session ||= MessageStore::Postgres::Session.build
       end
@@ -120,9 +128,10 @@ module FundsTransferBenchmark
           cell(:messages_throughput, "--", color: :gray)
         end
 
-        advisory_lock_partition = get_partition.advisory_lock(transfer.stream_name)
-        consumer_group_partition = get_partition.consumer_group(transfer.stream_name)
-        cell(:partition, "#{advisory_lock_partition} ⇔ #{consumer_group_partition}")
+        advisory_lock = get_advisory_lock.(transfer.stream_name)
+        advisory_lock_group_member = advisory_lock & 0xFF
+        consumer_group_member = get_consumer_group_member.(transfer.stream_name)
+        cell(:partition, "#{advisory_lock_group_member} ⇔ #{consumer_group_member}")
 
         if transfer.transferred?
           cell(:success, "Yes", color: :green)
@@ -257,7 +266,7 @@ module FundsTransferBenchmark
         end
 
         def number
-          hex, _ = id.split('-', 2)
+          *, hex = id.split('-')
 
           hex.to_i(16)
         end
