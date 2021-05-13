@@ -12,6 +12,14 @@ module FundsTransferBenchmark
         Category.example
       end
 
+      module Random
+        def self.example(category: nil)
+          id = ID::Random.example
+
+          StreamName.example(id, category: category)
+        end
+      end
+
       module Category
         def self.example
           'someCategory'

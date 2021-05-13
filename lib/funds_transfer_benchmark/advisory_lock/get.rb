@@ -32,7 +32,7 @@ module FundsTransferBenchmark
 
         group_member = cardinal_id_hash64 % advisory_lock_group_size
 
-        (category_hash64 << 8) | group_member
+        ((category_hash64 << 8) & 0xFFFFFFFFFFFFFFFF) | group_member
       end
 
       def unsigned_integer(signed_integer)
