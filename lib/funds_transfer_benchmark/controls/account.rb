@@ -26,7 +26,13 @@ module FundsTransferBenchmark
       end
 
       module ID
-        def self.example(increment=nil, group_size: nil)
+        def self.example(increment=nil, increment_limit: nil, group_size: nil)
+          increment ||= 0
+
+          if not increment_limit.nil?
+            increment %= increment_limit
+          end
+
           Controls::ID::GroupMember.example(increment, prefix: prefix, group_size: group_size)
         end
 

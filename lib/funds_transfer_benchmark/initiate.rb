@@ -37,10 +37,10 @@ module FundsTransferBenchmark
           iteration = (index * advisory_lock_group_size) + group_member
 
           withdrawal_id_increment = iteration
-          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, group_size: advisory_lock_group_size)
+          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, increment_limit: entities, group_size: advisory_lock_group_size)
 
-          deposit_id_increment = withdrawal_id_increment + 1
-          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, group_size: advisory_lock_group_size)
+          deposit_id_increment = iteration + 1
+          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, increment_limit: entities, group_size: advisory_lock_group_size)
 
           Transfer.new(transfer_id, withdrawal_account_id, deposit_account_id, iteration)
         end
