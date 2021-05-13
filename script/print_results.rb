@@ -2,5 +2,4 @@
 
 require_relative '../init'
 
-FundsTransferBenchmark::Measurements::Transfers.()
-FundsTransferBenchmark::Measurements::WriteThroughput.()
+FundsTransferBenchmark::Measurements::Transfers.(ENV['DATABASE_NAME'])

@@ -3,8 +3,8 @@ module FundsTransferBenchmark
     module Write
       module Transfer
         def self.call(id: nil, withdrawal_account_id: nil, deposit_account_id: nil, amount: nil, session: nil)
-          withdrawal_account_id ||= Account::ID::Withdrawal.example
-          deposit_account_id ||= Account::ID::Deposit.example
+          withdrawal_account_id ||= Account::Withdrawal.id
+          deposit_account_id ||= Account::Deposit.id
           amount ||= Money.example
 
           FundsTransferComponent::Commands::Transfer.(

@@ -2,6 +2,6 @@
 
 set -eu -o pipefail
 
-./set-pg-env.sh
+source ./set-pg-env.sh
 
 ./gems/bin/mdb-clear-messages

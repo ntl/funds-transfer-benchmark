@@ -3,19 +3,24 @@ module FundsTransferBenchmark
     def self.start_attrs
       assure_configuration
 
-      group_member = member - 1
-      group_size = size
+      if size == 1
+        return {}
+      end
 
       {
         :identifier => identifier,
-        :group_member => group_member,
-        :group_size => group_size
+        :group_member => member,
+        :group_size => size
       }
     end
 
     def self.assure_configuration
-      unless (1..size).include?(member)
-        fail "A consumer group size of #{size} has been specified; CONSUMER_GROUP_MEMBER must be a value between 1 and #{size}"
+      if size == 1
+        return if member.nil?
+      end
+
+      unless (1..size).include?(member_ordinal)
+        fail "A consumer group size of #{size} has been specified; CONSUMER_GROUP_MEMBER must be a value between 1 and #{size}, not #{member_ordinal.inspect}"
       end
     end
 
@@ -23,7 +28,7 @@ module FundsTransferBenchmark
       group_size = ENV['CONSUMER_GROUP_SIZE']
 
       if group_size.nil?
-        group_size = Settings.get(:read_partitions)
+        group_size = Settings.get(:consumer_group_size)
       else
         group_size = group_size.to_i
       end
@@ -32,7 +37,13 @@ module FundsTransferBenchmark
     end
 
     def self.member
-      ENV.fetch('CONSUMER_GROUP_MEMBER').to_i
+      return nil if member_ordinal.nil?
+
+      member_ordinal - 1
+    end
+
+    def self.member_ordinal
+      ENV['CONSUMER_GROUP_MEMBER']&.to_i
     end
 
     def self.identifier

@@ -5,29 +5,39 @@ module FundsTransferBenchmark
         ID.example
       end
 
+      module Deposit
+        def self.id(increment=nil)
+          ID.example(increment, prefix: id_prefix)
+        end
+
+        def self.id_prefix
+          0x22222222
+        end
+      end
+
+      module Withdrawal
+        def self.id(increment=nil)
+          ID.example(increment, prefix: id_prefix)
+        end
+
+        def self.id_prefix
+          0x33333333
+        end
+      end
+
       module ID
-        def self.example(offset=nil, offset_limit: nil)
-          Controls::ID.example(offset, offset_limit: offset_limit)
+        def self.example(increment=nil, increment_limit: nil, group_size: nil)
+          increment ||= 0
+
+          if not increment_limit.nil?
+            increment %= increment_limit
+          end
+
+          Controls::ID::GroupMember.example(increment, prefix: prefix, group_size: group_size)
         end
 
-        module Withdrawal
-          def self.example
-            ID.example(offset)
-          end
-
-          def self.offset
-            1
-          end
-        end
-
-        module Deposit
-          def self.example
-            ID.example(offset)
-          end
-
-          def self.offset
-            2
-          end
+        def self.prefix
+          0x00000000
         end
       end
     end

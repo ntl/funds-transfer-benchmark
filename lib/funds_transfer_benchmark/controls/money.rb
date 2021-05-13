@@ -1,5 +1,9 @@
 module FundsTransferBenchmark
   module Controls
-    Money = AccountComponent::Controls::Money
+    module Money
+      def self.example
+        1.1
+      end
+    end
   end
 end

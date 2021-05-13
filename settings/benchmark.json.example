@@ -3,7 +3,7 @@
   "entities": 1000,
   "throughputLimit": 1000000,
   "force": false,
-  "writePartitions": 1,
-  "readPartitions": 1,
+  "advisoryLockGroupSize": 1,
+  "consumerGroupSize": 1,
   "recreateMessageDB": true
 }
