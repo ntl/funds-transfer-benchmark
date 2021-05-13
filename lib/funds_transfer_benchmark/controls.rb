@@ -1,6 +1,5 @@
 require 'identifier/uuid'
 
-require 'funds_transfer_component'
 require 'funds_transfer_component/controls'
 
 require 'funds_transfer_benchmark/controls/id'
