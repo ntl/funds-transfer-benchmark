@@ -18,10 +18,11 @@ context "Get Advisory Lock" do
   comment "Stream: #{stream_name.inspect}"
 
   advisory_lock = get_advisory_lock.(stream_name)
-  control_advisory_lock_hex = "#{category_hash64.to_s(16).rjust(6, '0')}#{group_member.to_s(16).rjust(2, '0')}"
-  control_advisory_lock = control_advisory_lock_hex.to_i(16)
-
   comment "Advisory Lock: 0x#{advisory_lock.to_s(16)}"
+
+  category_hash64 &= (2 ** 56).pred
+  control_advisory_lock_hex = "#{category_hash64.to_s(16).rjust(14, '0')}#{group_member.to_s(16).rjust(2, '0')}"
+  control_advisory_lock = control_advisory_lock_hex.to_i(16)
   detail "Control Advisory Lock: 0x#{control_advisory_lock_hex}"
   detail "  Category Hash64: 0x#{category_hash64.to_s(16)}"
   detail "  Group Member: #{group_member}, 0x#{group_member.to_s(16).rjust(2, '0')} (Hash64: 0x#{stream_id_hash64.to_s(16)})"
