@@ -20,7 +20,7 @@ module FundsTransferBenchmark
       end
 
       unless (1..size).include?(member_ordinal)
-        fail "A consumer group size of #{size} has been specified; CONSUMER_GROUP_MEMBER must be a value between 1 and #{size}, not #{member_ordinal}"
+        fail "A consumer group size of #{size} has been specified; CONSUMER_GROUP_MEMBER must be a value between 1 and #{size}, not #{member_ordinal.inspect}"
       end
     end
 
