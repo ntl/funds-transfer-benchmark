@@ -31,8 +31,8 @@ module FundsTransferBenchmark
           :operations => 1000,
           :throughput_limit => 100,
           :force => false,
-          :write_partitions => 1,
-          :read_partitions => 1,
+          :advisory_lock_group_size => 1,
+          :consumer_group_size => 1,
           :recreate_message_db => true
         }
       end
