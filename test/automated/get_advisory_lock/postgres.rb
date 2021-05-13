@@ -10,12 +10,11 @@ context "Get Advisory Lock" do
   comment "Stream: #{stream_name.inspect}"
 
   session = MessageStore::Postgres::Session.build
-  advisory_lock_text = session.execute(<<~SQL).first.fetch('advisory_lock')
-  SELECT (hash_64(category('#{stream_name}')) << 8) | (MOD(hash_64(cardinal_id('#{stream_name}')), #{advisory_lock_group_size})) AS advisory_lock;
+  advisory_lock_text = session.execute(p <<~SQL).first.fetch('advisory_lock')
+  SELECT (hash_64(category('#{stream_name}')) << 8) + MOD(hash_64(cardinal_id('#{stream_name}')) & 255, #{advisory_lock_group_size}) AS advisory_lock;
   SQL
 
   advisory_lock = [advisory_lock_text.to_i].pack('q').unpack('Q').first
-  pp advisory_lock
   comment "        Advisory Lock: 0x#{advisory_lock.to_s(16)}"
 
   control_advisory_lock = get_advisory_lock.(stream_name)
