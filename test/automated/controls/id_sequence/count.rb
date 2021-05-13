@@ -7,10 +7,14 @@ context "Controls" do
 
       ids = Controls::ID::Sequence.example(count)
 
-      correct_count = ids.uniq.count == count
+      correct_ids = [
+        '00000000-0000-4000-8000-000000000000',
+        '00000000-0000-4000-8000-000000000001',
+        '00000000-0000-4000-8000-000000000002'
+      ]
 
       test "Generates the given number of UUIDs" do
-        assert(correct_count)
+        assert(ids == correct_ids)
       end
     end
   end
