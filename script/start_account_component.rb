@@ -12,6 +12,7 @@ module AccountComponent
       consumer_start_attrs = FundsTransferBenchmark::ConsumerGroup.start_attrs
 
       Consumers::Commands.start('account:command', **consumer_start_attrs)
+      Consumers::Commands::Transactions.start('accountTransaction', **consumer_start_attrs)
     end
   end
 end

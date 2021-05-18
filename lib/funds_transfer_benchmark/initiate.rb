@@ -42,7 +42,11 @@ module FundsTransferBenchmark
         transfer_ids_by_group_member[group_member] << transfer_id
       end
 
-      increment_limit = entities * advisory_lock_group_size
+      if worst_case
+        increment_limit = entities * advisory_lock_group_size
+      else
+        increment_limit = entities
+      end
 
       iteration = 0
 
