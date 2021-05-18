@@ -8,6 +8,7 @@ module FundsTransferBenchmark
     setting :operations
     setting :entities
     setting :advisory_lock_group_size
+    setting :worst_case
 
     def self.build(settings: nil)
       instance = new
@@ -26,28 +27,30 @@ module FundsTransferBenchmark
       logger.trace { "Preparing benchmark (Transfers: #{operations}, Accounts: #{accounts})" }
 
       money_increment = Controls::Money.example
+      deposit_amount = Rational(operations, accounts) * money_increment
 
-      standard_account_amount = Rational(operations, accounts) * money_increment
-
-      initial_account_amount = standard_account_amount + money_increment
+      increment_limit = accounts * advisory_lock_group_size
 
       accounts.times do |increment|
-        account_id = Controls::Account::ID.example(increment, increment_limit: entities, group_size: advisory_lock_group_size)
+        id_increment = id_increment(increment)
+        account_id = Controls::Account::ID.example(id_increment, increment_limit: increment_limit, group_size: advisory_lock_group_size)
 
-        if increment.zero?
-          amount = initial_account_amount
-        else
-          amount = standard_account_amount
-        end
+        logger.trace { "Issuing initial deposit (Account ID: #{account_id}, Amount: #{deposit_amount}, Iteration: #{increment + 1}/#{accounts})" }
 
-        logger.trace { "Issuing initial deposit (Account ID: #{account_id}, Amount: #{amount}, Iteration: #{increment + 1}/#{accounts})" }
+        Controls::Write::Deposit.(account_id: account_id, amount: deposit_amount, session: session)
 
-        Controls::Write::Deposit.(account_id: account_id, amount: amount, session: session)
-
-        logger.debug { "Initial deposit issued (Account ID: #{account_id}, Amount: #{amount}, Iteration: #{increment + 1}/#{accounts})" }
+        logger.debug { "Initial deposit issued (Account ID: #{account_id}, Amount: #{deposit_amount}, Iteration: #{increment + 1}/#{accounts})" }
       end
 
       logger.info { "Benchmark prepared (Transfers: #{operations}, Accounts: #{accounts})" }
+    end
+
+    def id_increment(increment)
+      if worst_case
+        increment * advisory_lock_group_size
+      else
+        increment
+      end
     end
 
     def session

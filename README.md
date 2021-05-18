@@ -14,6 +14,7 @@ Most of the scripts in this project can be controlled with a settings file, `set
 | `entities`              | Number of accounts to cycle transfers through                          | Same as `operations` |
 | `throughputLimit`       | Maximum number of transfers to issue during the run                    | `100`                |
 | `force`                 | `./initiate.sh` always starts a new run, even if MessageDB isn't reset | `false`              |
+| `worstCase`             | All streams will be read by the same consumer group member             | `false`              |
 | `advisoryLockGroupSize` | Number of advisory locks per-category when writing messages            | `1`                  |
 | `consumerGroupSize`     | Size of consumer groups                                                | `1`                  |
 | `recreateMessageDB`     | Whether to fully recreate message-db when preparing the benchmark      | `true`               |

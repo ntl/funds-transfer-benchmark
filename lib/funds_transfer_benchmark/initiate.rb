@@ -10,6 +10,7 @@ module FundsTransferBenchmark
     setting :throughput_limit
     setting :advisory_lock_group_size
     setting :force
+    setting :worst_case
 
     dependency :clock, Clock::UTC
 
@@ -30,19 +31,34 @@ module FundsTransferBenchmark
 
       assure_not_initiated
 
-      transfer_ids_by_group_member = Controls::FundsTransfer::ID::Sequence::Group.example(count: operations, size: advisory_lock_group_size)
+      transfer_ids_by_group_member = Array.new(advisory_lock_group_size) { [] }
+
+      get_advisory_lock = AdvisoryLock::Get.build(advisory_lock_group_size)
+      operations.times do |increment|
+        id_increment = transfer_id_increment(increment)
+        transfer_id = Controls::FundsTransfer::ID.example(id_increment, group_size: advisory_lock_group_size)
+
+        group_member = get_advisory_lock.group_member(transfer_id)
+        transfer_ids_by_group_member[group_member] << transfer_id
+      end
+
+      increment_limit = entities * advisory_lock_group_size
+
+      iteration = 0
 
       transfers_by_group_member = transfer_ids_by_group_member.map.with_index do |transfer_ids, group_member|
         transfer_ids.map.with_index do |transfer_id, index|
-          iteration = (index * advisory_lock_group_size) + group_member
+          withdrawal_id_increment = (index * advisory_lock_group_size) + group_member
+          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, increment_limit: increment_limit, group_size: advisory_lock_group_size)
 
-          withdrawal_id_increment = iteration
-          withdrawal_account_id = Controls::Account::ID.example(withdrawal_id_increment, increment_limit: entities, group_size: advisory_lock_group_size)
+          deposit_id_increment = ((index + 1) * advisory_lock_group_size) + group_member
+          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, increment_limit: increment_limit, group_size: advisory_lock_group_size)
 
-          deposit_id_increment = iteration + 1
-          deposit_account_id = Controls::Account::ID.example(deposit_id_increment, increment_limit: entities, group_size: advisory_lock_group_size)
+          transfer = Transfer.new(transfer_id, withdrawal_account_id, deposit_account_id, iteration)
 
-          Transfer.new(transfer_id, withdrawal_account_id, deposit_account_id, iteration)
+          iteration += 1
+
+          transfer
         end
       end
 
@@ -81,6 +97,14 @@ module FundsTransferBenchmark
       throughput_text = "%0.3f msg/s" % Rational(operations, elapsed_time)
 
       logger.info { "Benchmark initiated (Transfers: #{operations}, Elapsed Time: #{elapsed_time_text}, Throughput: #{throughput_text}, Accounts: #{entities || operations})" }
+    end
+
+    def transfer_id_increment(increment)
+      if worst_case
+        increment * advisory_lock_group_size
+      else
+        increment
+      end
     end
 
     def wait_cycle(elapsed_time_seconds)
