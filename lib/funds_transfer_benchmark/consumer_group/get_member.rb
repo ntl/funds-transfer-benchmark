@@ -25,6 +25,11 @@ module FundsTransferBenchmark
 
       def call(stream_name)
         cardinal_id = Messaging::StreamName.get_cardinal_id(stream_name)
+
+        cardinal_id(cardinal_id)
+      end
+
+      def cardinal_id(cardinal_id)
         cardinal_id_hash64 = hash64_signed(cardinal_id)
 
         cardinal_id_hash64 % consumer_group_size
