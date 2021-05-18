@@ -98,6 +98,8 @@ module FundsTransferBenchmark
           end
         end
 
+        print_footer
+
         if not transfers.empty?
           io.puts <<~TEXT
 
@@ -109,9 +111,9 @@ module FundsTransferBenchmark
           transfers.each do |_, transfer|
             print_transfer(transfer)
           end
-        end
 
-        io.puts
+          print_footer
+        end
       end
 
       def print_transfer(transfer)
@@ -153,7 +155,17 @@ module FundsTransferBenchmark
 
       def print_header
         io.puts
+        print_titles
+        print_separator
+      end
 
+      def print_footer
+        print_separator
+        print_titles
+        io.puts
+      end
+
+      def print_titles
         each_column do |column|
           attr_name = column.attr_name
 
@@ -165,8 +177,11 @@ module FundsTransferBenchmark
 
           cell(column.attr_name, column.text, align: align)
         end
-        io.puts
 
+        io.puts
+      end
+
+      def print_separator
         each_column do |column|
           border_width = column.width + 2
           border_repetitions = (border_width / 2) + 1
@@ -177,6 +192,7 @@ module FundsTransferBenchmark
 
           cell(column.attr_name, border)
         end
+
         io.puts
       end
 
