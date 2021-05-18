@@ -33,7 +33,7 @@ ed --quiet $acquire_lock_sql <<ED
 /^BEGIN/a
   _advisory_lock_group_size := $advisoryLockGroupSize;
   _cardinal_id := cardinal_id(acquire_lock.stream_name);
-  _cardinal_id_hash := hash_64(_cardinal_id);
+  _cardinal_id_hash := @hash_64(_cardinal_id);
 .
 /PERFORM pg_advisory_xact_lock(_category_name_hash)/ \
   s/_category_name_hash/(& << 8) | MOD(_cardinal_id_hash \& 255, _advisory_lock_group_size)/

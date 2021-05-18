@@ -8,11 +8,11 @@ context "Get Advisory Lock" do
   comment "Group Size: #{advisory_lock_group_size.inspect}"
 
   stream_id = Controls::ID::Random.example
-  stream_id_hash64 = Hash64.get_signed(stream_id)
+  stream_id_hash64 = Hash64.get(stream_id)
   group_member = (stream_id_hash64 & 0xFF) % advisory_lock_group_size
 
   category = Controls::StreamName::Category.example
-  category_hash64 = Hash64.get_unsigned(category)
+  category_hash64 = Hash64.get(category)
 
   stream_name = Messaging::StreamName.stream_name(stream_id, category)
   comment "Stream: #{stream_name.inspect}"

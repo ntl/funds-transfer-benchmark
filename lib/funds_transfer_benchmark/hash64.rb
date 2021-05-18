@@ -14,12 +14,16 @@ module FundsTransferBenchmark
       hash64_unsigned(text)
     end
 
+    def hash64(text)
+      hash64_signed = hash64_signed(text)
+      hash64_signed.abs
+    end
+
     def hash64_signed(text)
       hash64_unsigned = hash64_unsigned(text)
 
       [hash64_unsigned].pack('Q').unpack('q').first
     end
-    alias :hash64 :hash64_signed
 
     def hash64_unsigned(text)
       text_md5 = Digest::MD5.hexdigest(text)

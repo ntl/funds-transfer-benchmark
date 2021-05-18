@@ -8,7 +8,7 @@ context "Get Consumer Group Member" do
   comment "Consumer Group Size: #{consumer_group_size.inspect}"
 
   stream_id = Controls::ID::Random.example
-  stream_id_hash64 = Hash64.get_signed(stream_id)
+  stream_id_hash64 = Hash64.get(stream_id)
   control_consumer_group_member = stream_id_hash64 % consumer_group_size
 
   stream_name = Controls::StreamName.example(stream_id)

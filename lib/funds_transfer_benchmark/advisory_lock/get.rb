@@ -25,7 +25,7 @@ module FundsTransferBenchmark
 
       def call(stream_name)
         category = Messaging::StreamName.get_category(stream_name)
-        category_hash64 = hash64_unsigned(category)
+        category_hash64 = hash64(category)
 
         cardinal_id = Messaging::StreamName.get_cardinal_id(stream_name)
         group_member = group_member(cardinal_id)
@@ -34,13 +34,9 @@ module FundsTransferBenchmark
       end
 
       def group_member(cardinal_id)
-        cardinal_id_hash64_signed = hash64_signed(cardinal_id)
+        cardinal_id_hash64 = hash64(cardinal_id)
 
-        (cardinal_id_hash64_signed & 0xFF) % advisory_lock_group_size
-      end
-
-      def unsigned_integer(signed_integer)
-        [signed_integer].pack('q').unpack('Q').first
+        (cardinal_id_hash64 & 0xFF) % advisory_lock_group_size
       end
     end
   end

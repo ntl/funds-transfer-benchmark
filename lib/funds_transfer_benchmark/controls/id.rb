@@ -34,7 +34,10 @@ module FundsTransferBenchmark
           loop do
             id = ID.example(increment, prefix: prefix, seed: seed)
 
-            id_group_member = Hash64.get_unsigned(id) % group_size
+            id_hash64 = Hash64.get(id)
+
+            id_group_member = id_hash64 % group_size
+
             if id_group_member == group_member
               break
             end

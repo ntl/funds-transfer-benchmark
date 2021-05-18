@@ -30,7 +30,7 @@ module FundsTransferBenchmark
       end
 
       def cardinal_id(cardinal_id)
-        cardinal_id_hash64 = hash64_signed(cardinal_id)
+        cardinal_id_hash64 = hash64(cardinal_id)
 
         cardinal_id_hash64 % consumer_group_size
       end

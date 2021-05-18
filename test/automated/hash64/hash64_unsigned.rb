@@ -3,6 +3,7 @@ require_relative '../automated_init'
 context "Hash64" do
   context "Unsigned Integer" do
     text = "Some text"
+    assert(Hash64.get_signed(text) < 0)
 
     session = MessageStore::Postgres::Session.build
 

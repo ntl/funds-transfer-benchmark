@@ -12,7 +12,7 @@ context "Controls" do
       ids = 5.times.map do |increment|
         id = Controls::ID::GroupMember.example(increment, group_size: group_size)
 
-        group_member = Hash64.get_unsigned(id) % group_size
+        group_member = Hash64.get(id) % group_size
 
         group_members[id] = group_member
 
